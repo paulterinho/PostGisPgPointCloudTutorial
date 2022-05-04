@@ -1,0 +1,25 @@
+# docker-compose.yml
+# @see https://stackoverflow.com/questions/26598738/how-to-create-user-database-in-script-for-docker-postgres
+version: '3.8'
+services:
+  database:
+    build:
+      context: .
+      dockerfile: ./db/db.Dockerfile
+    restart: always
+    ports:
+      # <Port exposed> : < Port running inside container>
+      - '5432:5432'
+    expose:
+      # Opens port 3306 on the container
+      - '5432'
+    env_file:
+      - ./db/db.env # configure postgres
+    
+    volumes:
+      - postgis-database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+
+      #- db:/var/lib/postgresql/data
+      #- ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+volumes:
+  postgis-database-data: # named volumes can be managed easier using docker-compose
