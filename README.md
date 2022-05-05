@@ -18,3 +18,12 @@ make sure to avoid caching: `docker-compose build --no-cache`
   - Look for the "Default Gateway". This is the IP address you'll use in the PgAdmin in the next step
   - It's probably `172.24.0.1`
 - Open a browser to `http://localhost:8889/` to use the PgAdmin console, and add a new connection using the database IP address you found.
+
+# To connect to QGis 
+
+The IP address will be the vanilla `127.0.0.1` for an unkown reason, BUT PgAdmin will need you to get the IP Gatgeway. 
+
+# To Back Up
+Run the PgAdmin interface and do a backup that way, then copy the files to the current directly using the `docker cp` command like:
+- Use `docker container ls` to find the ID fo the container you need.
+- Then use: `docker cp 694f11fd6ef2:/var/lib/pgadmin/storage/unicorn_user_gmail.com/Colorado.backup.tar ./Colorado.backup.tar` to copy it to the current directory.
