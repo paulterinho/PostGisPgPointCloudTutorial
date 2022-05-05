@@ -1,8 +1,13 @@
 # docker-compose.yml
 # @see https://stackoverflow.com/questions/26598738/how-to-create-user-database-in-script-for-docker-postgres
 version: '3.8'
+
+# You should know that Docker Compose works with services.
+# 1 service = 1 container.
+# For example, a service, a server, a client, a database...
+# We use the keyword 'services' to start to create services.
 services:
-  database:
+  postgis:
     build:
       context: .
       dockerfile: ./db/db.Dockerfile
@@ -11,30 +16,47 @@ services:
       # <Port exposed> : < Port running inside container>
       - '5432:5432'
     expose:
-      # Opens port 3306 on the container
+      # Opens port  on the container
       - '5432'
-    networks:
-    - backend_network
+    # networks:
+    #   backend-network:
+    #     ipv4_address: 172.28.1.1
     env_file:
       - ./db/db.env # configure postgres
-    
     volumes:
-      - postgis-database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+      - postgis-data:/var/lib/postgresql/data/ # persist data even if container shuts down
 
   pgadmin4:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: karl.sangabriel@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: a1128f69-e6f7-4e93-a2df-3d4db6030abc
+    build:
+      context: ./pgadmin
+      dockerfile: Dockerfile
     ports:
     - "8889:80"
-    networks:
-    - backend_network
+    # networks:
+    #   backend-network:
+    #     ipv4_address: 172.28.1.2
     env_file:
-      - ./db/db.env # configure postgres
-networks:
-  backend_network:
-    driver: bridge
+      - ./pgadmin/pgadmin.env # configure postgres
+    depends_on:
+      - postgis
+
+# NETWORKS
+# networks:
+#   backend-network:
+#     ipam:
+#       driver: default
+#       config:
+#         - subnet: 172.28.0.0/16
+
+
+# VOLUMES # The `volumes` tag allows us to share a folder with our container
+# Its syntax is as follows: [folder path on our machine]:[folder path to retrieve in the container]
 
 volumes:
-  postgis-database-data: # named volumes can be managed easier using docker-compose
+  # In this example, we share the folder `db-data` in our root repository, with the default PostgreSQL data path
+  # It means that every time the repository is modifying the data inside
+  # of `/var/lib/postgresql/data/`, automatically the change will appear in `db-data`
+  # You don't need to create the `db-data` folder. Docker Compose will do it for you
+ 
+  postgis-data: # named volumes can be managed easier using docker-compose
+  pgadmin-data:

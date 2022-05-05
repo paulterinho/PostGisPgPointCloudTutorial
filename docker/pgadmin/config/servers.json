@@ -1,0 +1,14 @@
+{
+    "Servers": {
+      "1": {
+        "Name": "postgres",
+        "Group": "Servers",
+        "Host": "backend",
+        "Port": "5432",
+        "MaintenanceDB": "postgres",
+        "Username": "unicorn_user",
+        "SSLMode": "prefer",
+        "PassFile": "/pgpassfile"
+      }
+    }
+  }
